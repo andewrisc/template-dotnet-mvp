@@ -25,8 +25,7 @@ public class ProductService : IProductService
 
     public async Task<ProductDto?> GetByIdAsync(int id)
     {
-        var productList = await _repo.GetReadonlyByConditionAsync(x => x.Id == id, false);
-        var product = productList.FirstOrDefault();
+        var product = await _repo.GetByIdAsync(id, false);
         return product == null ? null : _mapper.Map<ProductDto>(product);
     }
 
@@ -39,8 +38,8 @@ public class ProductService : IProductService
 
     public async Task UpdateAsync(int id, UpdateProductDto dto)
     {
-        var productList = await _repo.GetReadonlyByConditionAsync(x => x.Id == id, true);
-        var product = productList.FirstOrDefault();
+        var product = await _repo.GetByIdAsync(id, false);
+
         if (product == null) throw new Exception("Product not found");
 
         _mapper.Map(dto, product);
@@ -50,8 +49,7 @@ public class ProductService : IProductService
 
     public async Task DeleteAsync(int id)
     {
-        var productList = await _repo.GetReadonlyByConditionAsync(x => x.Id == id, true);
-        var product = productList.FirstOrDefault();
+        var product = await _repo.GetByIdAsync(id, false);
         if (product == null) throw new Exception("Product not found");
 
         _repo.Remove(product);
