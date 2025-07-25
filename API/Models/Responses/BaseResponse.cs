@@ -1,39 +1,92 @@
 using System;
+using System.Net;
 
 namespace API.Models.Responses;
+
+public class BaseResponse<TData> : BaseResponse
+        where TData : class, new()
+{
+    public TData Data { get; set; }
+    public BaseResponse()
+        : base()
+    {
+        this.Data = new TData();
+    }
+
+    public BaseResponse(TData data)
+        : base()
+    {
+        this.Data = data;
+    }
+}
 
 public class BaseResponse
 {
     public bool IsValid { get; set; }
     public int StatusCode { get; set; }
-    public string Message { get; set; } = string.Empty;
+    public string Message { get; set; }
+    public BaseResponse()
+    {
+        this.IsValid = true;
+        this.Message = string.Empty;
+        this.StatusCode = 200;
+    }
+
+    public void CopyFrom(BaseResponse source)
+    {
+        this.Message = source.Message;
+        this.StatusCode = source.StatusCode;
+        this.IsValid = source.IsValid;
+    }
 }
 
-public class BaseResponse<T> : BaseResponse
+public static class BaseResponseExtensions
 {
-    public T? Data { get; set; }
-
-    public static BaseResponse<T> Success(T data, int statusCode = 200, string message = "")
+    public static TResponse SetUnauthorized<TResponse>(this TResponse response)
+        where TResponse : BaseResponse
     {
-        return new BaseResponse<T>
-        {
-            Data = data,
-            IsValid = true,
-            StatusCode = statusCode,
-            Message = message
-        };
+        response.StatusCode = (int)HttpStatusCode.Unauthorized;
+        return response;
     }
 
-    public static BaseResponse<T> Fail(string message, int statusCode = 400)
+    public static TResponse SetValidationMessage<TResponse>(this TResponse response, string validationMessage)
+        where TResponse : BaseResponse
     {
-        return new BaseResponse<T>
+        if (string.IsNullOrWhiteSpace(response.Message))
         {
-            Data = default,
-            IsValid = false,
-            StatusCode = statusCode,
-            Message = message
-        };
+            response.IsValid = false;
+            response.Message = validationMessage;
+        }
+        return response;
     }
+
+    public static TResponse SetErrorMessage<TResponse>(this TResponse response, string errorMessage)
+        where TResponse : BaseResponse
+    {
+        if (response.StatusCode == 200)
+        {
+            response.StatusCode = 500;
+            response.Message = errorMessage;
+        }
+        return response;
+    }
+
+    public static TResponse SetStatusCodeAndMessage<TResponse>(this TResponse response, HttpStatusCode httpStatusCode, string message)
+        where TResponse : BaseResponse => response.SetStatusCodeAndMessage((int)httpStatusCode, message);
+
+    public static TResponse SetStatusCodeAndMessage<TResponse>(this TResponse response, int statusCode, string message)
+        where TResponse : BaseResponse
+    {
+        if (response.StatusCode == 200)
+        {
+            response.StatusCode = statusCode;
+            response.Message = message;
+        }
+        return response;
+    }
+
+    public static bool IsSuccessAndValid<TResponse>(this TResponse response)
+        where TResponse : BaseResponse => response.StatusCode == 200 && response.IsValid;
 }
 
 
