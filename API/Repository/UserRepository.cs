@@ -6,19 +6,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.Repository;
 
-public class UserRepository : IUserRepository
+public class UserRepository : BaseRepository<User>, IUserRepository
 {
     private readonly AppDbContext _context;
 
-    public UserRepository(AppDbContext context)
+    public UserRepository(AppDbContext context) : base(context)
     {
         _context = context;
     }
 
     public async Task<User?> GetByEmailAndPasswordAsync(string email, string password)
     {
-
+        
         return await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.PasswordHash == password);
+    }
+
+    public async Task<User?> GetByEmailAsync(string email)
+    {
+        return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
     }
 
     public async Task<User?> GetCurrentUserId(int id)

@@ -6,12 +6,12 @@ using AutoMapper;
 
 namespace API.Services;
 
-public class ProductService : IProductService
+public class ProductService : BaseService<Product>, IProductService
 {
     private readonly IProductRepository _repo;
     private readonly IMapper _mapper;
 
-    public ProductService(IProductRepository repo, IMapper mapper)
+    public ProductService(IProductRepository repo, IMapper mapper) : base(repo)
     {
         _repo = repo;
         _mapper = mapper;
@@ -31,6 +31,17 @@ public class ProductService : IProductService
 
     public async Task CreateAsync(CreateProductDto dto)
     {
+        //usingtransation
+
+        // await this.UsingTransaction<BaseResponse>(async () =>
+        // {
+        //     var product = _mapper.Map<Product>(dto);
+        //     await _repo.AddAsync(product);
+        //     await _repo.SaveChangesAsync();
+
+        //     return new BaseResponse { Success = true }; // pastikan response return
+        // });
+
         var product = _mapper.Map<Product>(dto);
         await _repo.AddAsync(product);
         await _repo.SaveChangesAsync();

@@ -41,7 +41,29 @@ public class AuthController : BaseController
         var user = await _userService.GetCurrentUserAsync();
         if (user == null) return Unauthorized();
 
-        return Ok(new { user.Id, user.Email });
+        return Ok(new { user.Id, user.Email, user.Username });
+    }
+
+    [HttpPost("register")]
+    [AllowAnonymous]
+    public async Task<IActionResult> Register([FromBody] RegisterDto dto)
+    {
+        var existingUser = await _repo.GetByEmailAsync(dto.Email);
+        if (existingUser != null)
+            return BadRequest("Email sudah digunakan.");
+
+        var hashedPassword = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+
+        var newUser = new User
+        {
+            Email = dto.Email,
+            PasswordHash = hashedPassword,
+            Username = dto.UserName
+        };
+
+        await _repo.AddAsync(newUser);
+        await _repo.SaveChangesAsync();
+        return Ok("Akun berhasil dibuat");
     }
 
     private string GenerateJwtToken(User user)
