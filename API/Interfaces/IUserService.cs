@@ -1,8 +1,9 @@
 using System;
+using API.Entities;
 
 namespace API.Interfaces;
 
-public class IUserServices
+public interface IUserService
 {
-    
+    Task<User?> GetCurrentUserAsync();
 }
