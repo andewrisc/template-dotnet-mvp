@@ -8,8 +8,6 @@ namespace API.Repository;
 
 public class UserRepository : BaseRepository<User>, IUserRepository
 {
-    private readonly AppDbContext _context;
-
     public UserRepository(AppDbContext context) : base(context)
     {
         _context = context;
@@ -17,8 +15,11 @@ public class UserRepository : BaseRepository<User>, IUserRepository
 
     public async Task<User?> GetByEmailAndPasswordAsync(string email, string password)
     {
-        
-        return await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.PasswordHash == password);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        if (user == null) return null;
+
+        bool isMatch = BCrypt.Net.BCrypt.Verify(password, user.PasswordHash);
+        return isMatch ? user : null; 
     }
 
     public async Task<User?> GetByEmailAsync(string email)
