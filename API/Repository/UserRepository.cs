@@ -17,9 +17,7 @@ public class UserRepository : BaseRepository<User>, IUserRepository
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         if (user == null) return null;
-
-        bool isMatch = BCrypt.Net.BCrypt.Verify(password, user.PasswordHash);
-        return isMatch ? user : null; 
+        return user;
     }
 
     public async Task<User?> GetByEmailAsync(string email)

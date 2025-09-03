@@ -13,13 +13,11 @@ namespace API.Controllers;
 
 public class AuthController : BaseController
 {
-    private readonly IUserRepository _repo;
     private readonly IUserService _userService;
     private readonly IConfiguration _config;
 
     public AuthController(IUserRepository repo, IUserService userService, IConfiguration config)
     {
-        _repo = repo;
         _userService = userService;
         _config = config;
     }
@@ -28,7 +26,7 @@ public class AuthController : BaseController
     [AllowAnonymous]
     public async Task<IActionResult> Login([FromBody] LoginDto login)
     {
-        var user = await _repo.GetByEmailAndPasswordAsync(login.Email, login.Password);
+        var user = await _userService.GetByEmailAndPasswordAsync(login.Email, login.Password);
         if (user == null) return Unauthorized();
 
         var token = GenerateJwtToken(user);
@@ -48,21 +46,11 @@ public class AuthController : BaseController
     [AllowAnonymous]
     public async Task<IActionResult> Register([FromBody] RegisterDto dto)
     {
-        var existingUser = await _repo.GetByEmailAsync(dto.Email);
+        var existingUser = await _userService.GetByEmailAsync(dto.Email);
         if (existingUser != null)
             return BadRequest("Email sudah digunakan.");
 
-        var hashedPassword = BCrypt.Net.BCrypt.HashPassword(dto.Password);
-
-        var newUser = new User
-        {
-            Email = dto.Email,
-            PasswordHash = hashedPassword,
-            Username = dto.UserName
-        };
-
-        await _repo.AddAsync(newUser);
-        await _repo.SaveChangesAsync();
+        await _userService.RegisterAccount(dto);
         return Ok("Akun berhasil dibuat");
     }
 

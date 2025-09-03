@@ -30,18 +30,7 @@ public class ProductService : BaseService<Product>, IProductService
     }
 
     public async Task CreateAsync(CreateProductDto dto)
-    {
-        //usingtransation
-
-        // await this.UsingTransaction<BaseResponse>(async () =>
-        // {
-        //     var product = _mapper.Map<Product>(dto);
-        //     await _repo.AddAsync(product);
-        //     await _repo.SaveChangesAsync();
-
-        //     return new BaseResponse { Success = true }; // pastikan response return
-        // });
-
+    {   
         var product = _mapper.Map<Product>(dto);
         await _repo.AddAsync(product);
         await _repo.SaveChangesAsync();
