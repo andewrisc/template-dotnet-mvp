@@ -2,6 +2,8 @@ using API.Entities;
 using API.Interfaces;
 using API.Models;
 using API.Models.DTOs;
+using API.Models.DTOs.Product;
+using API.Repository;
 using AutoMapper;
 
 namespace API.Services;
@@ -29,11 +31,18 @@ public class ProductService : BaseService<Product>, IProductService
         return product == null ? null : _mapper.Map<ProductDto>(product);
     }
 
-    public async Task CreateAsync(CreateProductDto dto)
-    {   
-        var product = _mapper.Map<Product>(dto);
-        await _repo.AddAsync(product);
-        await _repo.SaveChangesAsync();
+    public async Task<ProductResponse> CreateAsync(CreateProductDto dto)
+    {
+        return await this.UsingTransaction(async () =>
+        {
+            ProductResponse productResponse = new();
+            Product product = _mapper.Map<Product>(dto);
+            await _repo.AddAsync(product);
+            await _repo.SaveChangesAsync();
+
+            productResponse.Data = _mapper.Map<ProductDto>(product);
+            return productResponse;
+        });
     }
 
     public async Task UpdateAsync(int id, UpdateProductDto dto)

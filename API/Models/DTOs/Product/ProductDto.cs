@@ -2,7 +2,7 @@ using System;
 
 namespace API.Models.DTOs;
 
-public class ProductDto
+public class ProductDto 
 {
 
     public int Id { get; set; }

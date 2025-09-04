@@ -40,6 +40,7 @@ public class BaseResponse
     }
 }
 
+
 public static class BaseResponseExtensions
 {
     public static TResponse SetUnauthorized<TResponse>(this TResponse response)

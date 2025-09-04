@@ -1,8 +1,9 @@
 using System;
+using API.Models.Responses;
 
 namespace API.Models.DTOs;
 
-public class CreateProductDto
+public class CreateProductDto : BaseParameters
 {
     public string Name { get; set; } = null!;
     public string? Description { get; set; }

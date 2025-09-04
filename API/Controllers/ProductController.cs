@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using API.Interfaces;
 using API.Models.DTOs;
+using API.Models.DTOs.Product;
 
 namespace API.Controllers;
 
@@ -33,8 +34,7 @@ public class ProductController : BaseController
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateProductDto dto)
     {
-        await _service.CreateAsync(dto);
-        return NoContent();
+        return ResponseToActionResult(await _service.CreateAsync(dto));
     }
 
     [HttpPut("{id}")]
