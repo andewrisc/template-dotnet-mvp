@@ -16,6 +16,7 @@ Perfect for teams who want to deliver reliable, secure, and high-performance sol
 - **Extension Methods**: Helpers for queryable and API extensions.
 - **Entity Framework Core**: Modern ORM for data access and migrations.
 - **Configuration and Logging**: Centralized configuration and NLog for logging.
+- **Logging System**: Integrated logging for monitoring and troubleshooting.
 - **Authentication**: JWT authentication for secure APIs.
 - **Paging, Filtering, Ordering**: Generic base models and query helpers for advanced querying.
 
