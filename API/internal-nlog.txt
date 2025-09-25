@@ -1,0 +1,5 @@
+2025-09-25 07:42:49.1784 Info Registered target NLog.Targets.FileTarget(Name=logfile)
+2025-09-25 07:42:49.1944 Info Registered target NLog.Targets.ConsoleTarget(Name=logconsole)
+2025-09-25 07:42:49.2053 Info NLog, Version=6.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 6.0.4.4534. Product version: 6.0.4+0f63723442db07c29eb838b0bce8b5633031a04e. GlobalAssemblyCache: False
+2025-09-25 07:42:49.2053 Info AutoReload Config File Monitor starting
+2025-09-25 07:42:49.2542 Info Configuration initialized.

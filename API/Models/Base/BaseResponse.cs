@@ -1,45 +1,25 @@
-using System;
+
 using System.Net;
 
-namespace API.Models.Responses;
-
-public class BaseResponse<TData> : BaseResponse
-        where TData : class, new()
-{
-    public TData Data { get; set; }
-    public BaseResponse()
-        : base()
-    {
-        this.Data = new TData();
-    }
-
-    public BaseResponse(TData data)
-        : base()
-    {
-        this.Data = data;
-    }
-}
+namespace API.Models.Base;
 
 public class BaseResponse
 {
-    public bool IsValid { get; set; }
     public int StatusCode { get; set; }
-    public string Message { get; set; }
+    public bool IsValid { get; set; }
+    public string? Message { get; set; }
     public BaseResponse()
     {
-        this.IsValid = true;
-        this.Message = string.Empty;
-        this.StatusCode = 200;
-    }
-
-    public void CopyFrom(BaseResponse source)
-    {
-        this.Message = source.Message;
-        this.StatusCode = source.StatusCode;
-        this.IsValid = source.IsValid;
+        StatusCode = (int)HttpStatusCode.OK;
+        IsValid = true;
     }
 }
 
+
+public class BaseResponse<T> : BaseResponse
+{
+    public T? Data { get; set; }
+}
 
 public static class BaseResponseExtensions
 {

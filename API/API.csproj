@@ -11,6 +11,7 @@
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.18" />
+    <PackageReference Include="NLog.Web.AspNetCore" Version="6.0.4" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.13.0" />
@@ -18,6 +19,7 @@
 
   <ItemGroup>
     <Folder Include="Data\" />
+    <Folder Include="Models\Parameters\User\" />
   </ItemGroup>
 
 </Project>

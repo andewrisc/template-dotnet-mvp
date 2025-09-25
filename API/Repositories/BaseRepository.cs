@@ -4,7 +4,7 @@ using API.Data;
 using API.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.Repository;
+namespace API.Repositories;
 
 public class BaseRepository<T> : IBaseRepository<T> where T : class
 {

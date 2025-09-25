@@ -4,7 +4,7 @@ using API.Entities;
 using API.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.Repository;
+namespace API.Repositories;
 
 public class UserRepository : BaseRepository<User>, IUserRepository
 {

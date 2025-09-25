@@ -1,7 +1,8 @@
 using System;
 using API.Data;
 using API.Interfaces;
-using API.Models.Responses;
+using API.Models.Base;
+
 
 namespace API.Services;
 

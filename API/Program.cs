@@ -1,17 +1,19 @@
 using API.Data;
 using API.Helpers;
-using API.Interfaces;
-using API.Repository;
-using API.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using API.Extensions;
+using NLog.Web;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+// NLog
+builder.Logging.ClearProviders(); //Clear Log Default 
+builder.Host.UseNLog();           
 
 builder.Services.AddHttpContextAccessor();
 

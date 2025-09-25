@@ -1,18 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using API.Interfaces;
-using API.Models.DTOs;
-using API.Models.DTOs.Product;
+using API.Models.Parameters.Product;
 
 namespace API.Controllers;
 
-public class ProductController : BaseController
+public class ProductController(IProductService service) : BaseController
 {
-    private readonly IProductService _service;
-
-    public ProductController(IProductService service)
-    {
-        _service = service;
-    }
+    private readonly IProductService _service = service;
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
@@ -31,18 +25,29 @@ public class ProductController : BaseController
         return Ok(product);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateProductDto dto)
+    [HttpPost("create")]
+    public async Task<IActionResult> Create([FromBody] ProductCreateParameters parameters)
     {
-        return ResponseToActionResult(await _service.CreateAsync(dto));
+        return ResponseToActionResult(await _service.CreateAsync(parameters));
+    }
+
+    [HttpPost("search")]
+    public async Task<IActionResult> Search([FromBody] ProductSearchParameters parameters)
+    {
+        ProductListResponse response = await DoService(parameters, async (svcParameters) =>
+        {
+           return await _service.SearchAsync(parameters);
+        });
+        return ResponseToActionResult(response);
+        
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] UpdateProductDto dto)
+    public async Task<IActionResult> Update(int id, [FromBody] ProductUpdateParameters parameters)
     {
         try
         {
-            await _service.UpdateAsync(id, dto);
+            await _service.UpdateAsync(id, parameters);
             return NoContent();
         }
         catch (Exception ex)
