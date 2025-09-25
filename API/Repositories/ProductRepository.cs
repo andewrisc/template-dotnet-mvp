@@ -18,7 +18,7 @@ public class ProductRepository(AppDbContext context) : BaseRepository<Product>(c
     public async Task<BaseListResult<Product>> SearchAsync(ProductSearchParameters parameters, bool trackChanges)
     {
         IQueryable<Product> query = this.FindAll(trackChanges);
-        // query = this.Filtering(query, parameters);
+        query = this.Filtering(query, parameters);
         return await query.ToListWithOrderByAndPagingAsync(parameters);
     }
 
@@ -26,17 +26,11 @@ public class ProductRepository(AppDbContext context) : BaseRepository<Product>(c
     {
         IQueryable<Product> queryResult = query;
 
-        // string? filterCoa = parameters?.Filter?.CoaFilter?.ToUpper().Trim();
-        // bool? filterIsActive = parameters?.Filter?.IsActive;
-
-        // if (filterCoa.Count() > 0)
-        // {
-        //     queryResult = queryResult.Where(e => e.CoaCode.ToUpper().Contains(filterCoa) || e.CoaName.ToUpper().Contains(filterCoa));
-        // }
-        // if (filterIsActive.HasValue)
-        // {
-        //     queryResult = queryResult.Where(e => e.IsActive == filterIsActive.Value);
-        // }
+        string? filterCategory = parameters?.Filter.Category?.ToLower();
+        if (!string.IsNullOrEmpty(filterCategory))
+        {
+            queryResult = queryResult.Where(e => e.Category!.ToLower().Contains(filterCategory!));
+        }
 
         return queryResult;
     }
