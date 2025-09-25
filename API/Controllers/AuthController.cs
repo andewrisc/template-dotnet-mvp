@@ -16,7 +16,7 @@ public class AuthController : BaseController
     private readonly IUserService _userService;
     private readonly IConfiguration _config;
 
-    public AuthController(IUserRepository repo, IUserService userService, IConfiguration config)
+    public AuthController(IUserService userService, IConfiguration config)
     {
         _userService = userService;
         _config = config;
