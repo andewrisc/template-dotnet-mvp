@@ -1,10 +1,10 @@
+using System;
 using API.Models.Base;
 using API.Models.DTOs.Product;
 
-
 namespace API.Models.Parameters.Product;
 
-public class ProductCreateResponse : BaseResponse<ProductDto>
+public class ProductUpdateResponse : BaseResponse<ProductDto>
 {
-    
+
 }

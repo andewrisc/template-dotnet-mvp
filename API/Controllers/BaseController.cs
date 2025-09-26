@@ -31,6 +31,19 @@ namespace API.Controllers
             }, methodName);
         }
 
+        protected async Task<TOutput> DoServiceAny<TInput, TOutput>(TInput parameters, Func<TInput, Task<TOutput>> func, [CallerMemberName] string methodName = "")
+        where TOutput : BaseResponse, new()
+        {
+            return await DoService_LogAsync(parameters, async (parameters) =>
+            {
+                return await DoService_TryCatchAsync(async () =>
+                {
+                    return await func(parameters);
+
+                }, methodName);
+            }, methodName);
+        }
+
         protected async Task<TOutput> DoService_TryCatchAsync<TOutput>(Func<Task<TOutput>> func, string methodName)
          where TOutput : BaseResponse, new()
         {

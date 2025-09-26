@@ -12,7 +12,7 @@ using NLog.Web;
 var builder = WebApplication.CreateBuilder(args);
 
 // NLog
-builder.Logging.ClearProviders(); //Clear Log Default 
+// builder.Logging.ClearProviders(); //Clear Log Default 
 builder.Host.UseNLog();           
 
 builder.Services.AddHttpContextAccessor();

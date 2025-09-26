@@ -1,8 +1,7 @@
+using System.Net;
 using API.Entities;
 using API.Interfaces;
-using API.Models;
 using API.Models.Base;
-using API.Models.DTOs;
 using API.Models.DTOs.Product;
 using API.Models.Parameters.Product;
 using AutoMapper;
@@ -20,49 +19,76 @@ public class ProductService : BaseService<Product>, IProductService
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<ProductDto>> GetAllAsync()
+
+    public async Task<ProductIdResponse> GetByIdAsync(ProductIdParameters parameters)
     {
-        var products = await _repo.GetReadonlyByConditionAsync(x => true, false);
-        return _mapper.Map<IEnumerable<ProductDto>>(products);
+        ProductIdResponse response = new();
+        Product? product = await _repo.GetByIdAsync(parameters.Id, false);
+        #region validation
+        if (product == null)
+            response.SetStatusCodeAndMessage(HttpStatusCode.NotFound,"Product is not found.");
+        if (!response.IsSuccessAndValid())
+        {
+            return response;
+        }
+        #endregion
+        response.Data = _mapper.Map<ProductDto>(product);
+        return response;
     }
 
-    public async Task<ProductDto?> GetByIdAsync(int id)
-    {
-        var product = await _repo.GetByIdAsync(id, false);
-        return product == null ? null : _mapper.Map<ProductDto>(product);
-    }
-
-    public async Task<ProductResponse> CreateAsync(ProductCreateParameters parameters)
+    public async Task<ProductCreateResponse> CreateAsync(ProductCreateParameters parameters)
     {
         return await this.UsingTransaction(async () =>
         {
-            ProductResponse productResponse = new();
-            Product product = _mapper.Map<Product>(parameters);
-            productResponse.SetStatusCodeAndMessage(400, "validation hit!");
-            if (!productResponse.IsSuccessAndValid())
-            {
-                return productResponse;
-            }
+            ProductCreateResponse response = new();
 
+            #region validation
+            if (parameters == null)
+            {
+                response.SetValidationMessage("Parameter Product is not found.");
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(parameters.Name))
+                {
+                    response.SetValidationMessage("Product Name cannot empty.");
+                }
+            }
+            if (!response.IsSuccessAndValid())
+            {
+                return response;
+            }
+            #endregion
+
+            Product product = _mapper.Map<Product>(parameters);
             await _repo.AddAsync(product);
             await _repo.SaveChangesAsync();
 
-
-
-            productResponse.Data = _mapper.Map<ProductDto>(product);
-            return productResponse;
+            response.Data = _mapper.Map<ProductDto>(product);
+            return response;
         });
     }
 
-    public async Task UpdateAsync(int id, ProductUpdateParameters parameters)
+
+
+    public async Task<ProductUpdateResponse> UpdateAsync(ProductUpdateParameters parameters)
     {
-        var product = await _repo.GetByIdAsync(id, false);
+        ProductUpdateResponse response = new();
+        Product? product = await _repo.GetByIdAsync(parameters.Id, true);
 
-        if (product == null) throw new Exception("Product not found");
+        #region Validation
+        if (product == null)
+        {
+            response.SetStatusCodeAndMessage(404, "Product Not Found!");
+            if (!response.IsSuccessAndValid())
+            {
+                return response;
+            }
+        }
+        #endregion
 
-        _mapper.Map(parameters, product);
-        _repo.Update(product);
         await _repo.SaveChangesAsync();
+        return response;
     }
 
     public async Task DeleteAsync(int id)
@@ -75,7 +101,7 @@ public class ProductService : BaseService<Product>, IProductService
     }
 
     public async Task<ProductListResponse> SearchAsync(ProductSearchParameters parameters)
-    {    
+    {
         ProductListResponse productListResponse = new ProductListResponse();
 
         #region validation

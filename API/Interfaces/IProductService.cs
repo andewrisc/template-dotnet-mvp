@@ -5,10 +5,8 @@ namespace API.Interfaces;
 
 public interface IProductService
 {
-    Task<IEnumerable<ProductDto>> GetAllAsync();
-    Task<ProductDto?> GetByIdAsync(int id);
-    Task<ProductResponse> CreateAsync(ProductCreateParameters dto);
-    Task UpdateAsync(int id, ProductUpdateParameters dto);
-    Task DeleteAsync(int id);
-    Task<ProductListResponse> SearchAsync(ProductSearchParameters dto);
+    Task<ProductIdResponse> GetByIdAsync(ProductIdParameters parameters);
+    Task<ProductCreateResponse> CreateAsync(ProductCreateParameters parameters);
+    Task<ProductUpdateResponse> UpdateAsync(ProductUpdateParameters parameters);
+    Task<ProductListResponse> SearchAsync(ProductSearchParameters parameters);
 }

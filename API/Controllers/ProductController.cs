@@ -8,27 +8,27 @@ public class ProductController(IProductService service) : BaseController
 {
     private readonly IProductService _service = service;
 
-    [HttpGet]
-    public async Task<IActionResult> GetAll()
-    {
-        var products = await _service.GetAllAsync();
-        return Ok(products);
-    }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    // [HttpGet("{id}")]
+    [HttpPost("get-by-id")]
+    public async Task<IActionResult> GetById(ProductIdParameters parameters)
     {
-        var product = await _service.GetByIdAsync(id);
-        if (product == null)
-            return NotFound();
+        ProductIdResponse response = await DoServiceAny(parameters, async (svcParameters) =>
+        {
+            return await _service.GetByIdAsync(parameters);
+        });
+        return ResponseToActionResult(response);
 
-        return Ok(product);
     }
 
     [HttpPost("create")]
     public async Task<IActionResult> Create([FromBody] ProductCreateParameters parameters)
     {
-        return ResponseToActionResult(await _service.CreateAsync(parameters));
+        ProductCreateResponse response = await DoServiceAny(parameters, async (svcParameters) =>
+        {
+            return await _service.CreateAsync(parameters);
+        });
+        return ResponseToActionResult(response);
     }
 
     [HttpPost("search")]
@@ -36,37 +36,22 @@ public class ProductController(IProductService service) : BaseController
     {
         ProductListResponse response = await DoService(parameters, async (svcParameters) =>
         {
-           return await _service.SearchAsync(parameters);
+            return await _service.SearchAsync(parameters);
         });
         return ResponseToActionResult(response);
-        
+
     }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] ProductUpdateParameters parameters)
+    [HttpPost("update")]
+    public async Task<IActionResult> Update([FromBody] ProductUpdateParameters parameters)
     {
-        try
+        ProductUpdateResponse response = await DoServiceAny(parameters, async (svcParameters) =>
         {
-            await _service.UpdateAsync(id, parameters);
-            return NoContent();
-        }
-        catch (Exception ex)
-        {
-            return NotFound(new { message = ex.Message });
-        }
+            return await _service.UpdateAsync(parameters);;
+        });
+        return ResponseToActionResult(response);
+       
     }
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
-    {
-        try
-        {
-            await _service.DeleteAsync(id);
-            return NoContent();
-        }
-        catch (Exception ex)
-        {
-            return NotFound(new { message = ex.Message });
-        }
-    }
+   
 }

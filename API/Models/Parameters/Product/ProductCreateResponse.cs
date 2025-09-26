@@ -4,7 +4,7 @@ using API.Models.DTOs.Product;
 
 namespace API.Models.Parameters.Product;
 
-public class ProductCreateResponse : BaseResponse<ProductDto>
+public class ProductResponse : BaseResponse<ProductDto>
 {
     
 }
